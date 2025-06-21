@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>平平无奇的一个官网</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💻</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 微软风格高级主题 */
+        :root {
+            --ms-blue: #0078d4;
+            --ms-light-blue: #e6f4fa;
+            --ms-dark: #1b1b1b;
+            --ms-darker: #050505;
+            --ms-green: #107c10;
+            --code-green: #4ECCA3;
+            --ms-gray: #f3f2f1;
+            --ms-bg: #0f0f11;
+            --accent-color: #00ff9d;
+            --card-bg: rgba(25, 25, 28, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Exo 2', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--ms-bg);
+            color: #e0e0e0;
+            line-height: 1.7;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(16, 124, 16, 0.05) 0%, rgba(16, 124, 16, 0) 20%),
+                radial-gradient(circle at 90% 80%, rgba(78, 204, 163, 0.05) 0%, rgba(78, 204, 163, 0) 30%);
+            background-attachment: fixed;
+        }
+        
+        /* 预加载处理 */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--ms-darker);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        
+        .preloader.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loading-progress {
+            width: 280px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, var(--ms-blue), var(--code-green));
+            transition: width 0.4s ease;
+        }
+        
+        .preloader-logo {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(0,255,157,0.5);
+        }
+        
+        .loading-text {
+            color: #aaa;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        
+        /* 头部导航栏 */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(5, 5, 5, 0.88);
+            color: white;
+            padding: 16px 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        header.scrolled {
+            padding: 12px 0;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-shadow: 0 0 5px rgba(0,255,157,0.5);
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 32px;
+            position: relative;
+        }
+        
+        nav li::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.4s ease;
+        }
+        
+        nav li:hover::after {
+            width: 100%;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            color: var(--accent-color);
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            background: linear-gradient(145deg, var(--ms-dark), #0c0c0c);
+            color: white;
+            text-align: center;
+            padding: 220px 0 100px;
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3.8rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            position: relative;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            background: linear-gradient(to right, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            position: relative;
+            z-index: 5;
+            line-height: 1.8;
+        }
+        
+        .hero-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, var(--ms-green), var(--accent-color));
+            color: #0f0f11;
+            text-decoration: none;
+            padding: 16px 48px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 25px rgba(0,255,157,0.4);
+            margin-top: 10px;
+            animation: pulseBtn 2s infinite;
+        }
+        
+        .hero-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(0,255,157,0.6);
+        }
+        
+        .hero-btn i {
+            margin-left: 10px;
+        }
+        
+        /* 代码雨容器 */
+        #code-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.7;
+        }
+        
+        /* 应用程序展示区域 */
+        .apps-section {
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-title {
+            font-size: 2.8rem;
+            margin-bottom: 60px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to right, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 4px;
+            background: linear-gradient(to right, var(--ms-green), var(--accent-color));
+            border-radius: 2px;
+        }
+        
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        
+        .app-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(78, 204, 163, 0.1);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.7s ease, opacity 0.7s ease, box-shadow 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .app-card.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 40px rgba(0,255,157,0.15);
+            border: 1px solid rgba(78, 204, 163, 0.3);
+        }
+        
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ms-green), var(--accent-color));
+            opacity: 0.7;
+        }
+        
+        .app-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #0a6a0a, #00cc7f);
+            border-radius: 18px;
+            margin-bottom: 25px;
+            font-size: 30px;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(0,255,157,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .app-card:hover .app-icon {
+            transform: scale(1.1);
+        }
+        
+        .app-title {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: white;
+            transition: color 0.3s;
+        }
+        
+        .app-card:hover .app-title {
+            color: var(--accent-color);
+        }
+        
+        .app-description {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #bbb;
+        }
+        
+        .app-features {
+            margin: 25px 0;
+            padding-left: 20px;
+        }
+        
+        .app-feature {
+            position: relative;
+            padding: 8px 0;
+            color: #ccc;
+            font-size: 1rem;
+        }
+        
+        .app-feature::before {
+            content: '✓';
+            position: absolute;
+            left: -20px;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(78, 204, 163, 0.15);
+            color: var(--accent-color);
+            text-decoration: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(78, 204, 163, 0.3);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 15px;
+        }
+        
+        .download-btn:hover {
+            background: rgba(78, 204, 163, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,255,157,0.2);
+        }
+        
+        .download-btn i {
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        
+        .app-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed rgba(78, 204, 163, 0.2);
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        /* 下载确认对话框 */
+        .download-confirm {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s;
+        }
+        
+        .download-confirm.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .confirm-box {
+            background: var(--ms-darker);
+            width: 90%;
+            max-width: 600px;
+            padding: 50px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(78, 204, 163, 0.3);
+            box-shadow: 0 20px 50px rgba(0,255,157,0.25);
+            transform: translateY(-20px) scale(0.95);
+            transition: transform 0.5s, opacity 0.5s;
+            position: relative;
+        }
+        
+        .download-confirm.active .confirm-box {
+            transform: translateY(0) scale(1);
+        }
+        
+        .confirm-box h3 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .app-confirm-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+        }
+        
+        .app-info {
+            background: rgba(78, 204, 163, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .app-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+            font-size: 1.1rem;
+        }
+        
+        .app-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-label {
+            color: #bbb;
+        }
+        
+        .item-value {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        
+        .confirm-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .confirm-btn {
+            padding: 15px 45px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .confirm-download {
+            background: linear-gradient(145deg, var(--ms-green), var(--accent-color));
+            color: var(--ms-darker);
+            box-shadow: 0 8px 20px rgba(0,255,157,0.4);
+        }
+        
+        .confirm-download:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,255,157,0.6);
+        }
+        
+        .confirm-cancel {
+            background: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .confirm-cancel:hover {
+            background: rgba(78, 204, 163, 0.15);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-btn:hover {
+            background: var(--accent-color);
+            color: #000;
+            transform: rotate(90deg);
+        }
+        
+        /* 粒子效果 */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* 页脚样式 */
+        footer {
+            position: relative;
+            background: linear-gradient(to top, rgba(5, 5, 5, 0.95), rgba(5, 5, 5, 0.85));
+            color: #aaa;
+            padding: 100px 0 40px;
+            overflow: hidden;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: white;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--accent-color);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 16px;
+        }
+        
+        .footer-links a {
+            color: #999;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-links a i {
+            margin-right: 10px;
+            width: 20px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+        
+        .footer-links a:hover i {
+            transform: translateX(5px);
+            color: var(--accent-color);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .social-links a::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .social-links a:hover::after {
+            opacity: 1;
+        }
+        
+        .social-links a:hover {
+            background: var(--accent-color);
+            color: #000;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,255,157,0.3);
+        }
+        
+        .copyright {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 1rem;
+            color: #777;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        /* 动画定义 */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        @keyframes pulseBtn {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 8px 25px rgba(0,255,157,0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 35px rgba(0,255,157,0.6);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 25px rgba(0,255,157,0.4);
+            }
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                padding: 180px 0 70px;
+                min-height: auto;
+            }
+            
+            .hero h1 {
+                font-size: 2.6rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+                padding: 0 10px;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .app-card {
+                padding: 30px;
+            }
+            
+            .app-title {
+                font-size: 1.9rem;
+            }
+            
+            nav li {
+                margin-left: 20px;
+            }
+            
+            .confirm-box {
+                padding: 30px;
+            }
+            
+            .confirm-btn {
+                padding: 14px 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.1rem;
+                line-height: 1.3;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav li {
+                margin: 0 8px 8px;
+            }
+            
+            .confirm-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .confirm-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(25, 25, 28, 0.8);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--ms-green), var(--accent-color));
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 预加载页面 -->
+    <div class="preloader">
+        <div class="preloader-logo"><i class="fas fa-cube"></i> 平平无奇的官网</div>
+        <div class="loading-progress">
+            <div class="progress-bar"></div>
+        </div>
+        <div class="loading-text">网站初始化中...</div>
+    </div>
+    
+    <!-- 下载确认对话框 -->
+    <div class="download-confirm" id="download-dialog">
+        <div class="confirm-box">
+            <div class="close-btn" id="close-dialog">
+                <i class="fas fa-times"></i>
+            </div>
+            <h3><span class="app-confirm-icon" id="confirm-icon"></span> <span id="confirm-title">应用下载</span></h3>
+            <p>您即将下载以下应用程序：</p>
+            
+            <div class="app-info">
+                <div class="app-info-item">
+                    <span class="item-label">应用名称:</span>
+                    <span class="item-value" id="app-name">-</span>
+                </div>
+                <div class="app-info-item">
+                    <span class="item-label">版本号:</span>
+                    <span class="item-value" id="app-version">-</span>
+                </div>
+                <div class="app-info-item">
+                    <span class="item-label">文件大小:</span>
+                    <span class="item-value" id="app-size">-</span>
+                </div>
+                <div class="app-info-item">
+                    <span class="item-label">文件类型:</span>
+                    <span class="item-value" id="app-type">-</span>
+                </div>
+                <div class="app-info-item">
+                    <span class="item-label">兼容系统:</span>
+                    <span class="item-value" id="app-os">-</span>
+                </div>
+            </div>
+            
+            <div class="confirm-buttons">
+                <button class="confirm-btn confirm-download" id="start-download">
+                    <i class="fas fa-download"></i> 立即下载
+                </button>
+                <button class="confirm-btn confirm-cancel" id="cancel-download">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 标题区域 -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo"><i class="fas fa-laptop-code"></i> 啥也不是</a>
+                <nav>
+                    <ul>
+                        <li><a href="#home">首页</a></li>
+                        <li><a href="#apps">应用</a></li>
+                        <li><a href="#download">下载</a></li>
+                        <li><a href="#about">关于</a></li>
+                        <li><a href="#contact">联系</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>打造非凡的数字体验</h1>
+            <p>每一行代码都是对完美的追求，每一个应用都是对创新的致敬。在这里，平凡中孕育着非凡。（全都是ai写的，作者也很无奈....）</p>
+            <p>探索我们精心打造的数字工具，体验前沿科技的无限魅力。</p>
+            <a href="#apps" class="hero-btn">探索应用 <i class="fas fa-arrow-down"></i></a>
+        </div>
+        <canvas id="code-rain"></canvas>
+        <div class="particles" id="particles"></div>
+    </section>
+
+    <!-- 应用程序展示区 -->
+    <section class="apps-section" id="apps">
+        <div class="container">
+            <h2 class="section-title">应用</h2>
+            
+            <div class="apps-grid">
+                <!-- App 1 - 绿色代码雨 -->
+                <div class="app-card">
+                    <div class="app-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="app-title">绿色炫酷代码雨</h3>
+                    <p class="app-description">
+                        强大的桌面特效应用，在您的屏幕上创建华丽炫酷的绿色代码雨效果。仿照经典科幻电影的视觉效果。
+                    </p>
+                    <ul class="app-features">
+                        <li class="app-feature">高级动态粒子系统</li>
+                        <li class="app-feature"></li>
+                        <li class="app-feature">超低资源占用设计</li>
+                        <li class="app-feature">深色主题</li>
+                        <li class="app-feature">多屏适配支持</li>
+                    </ul>
+                    <button class="download-btn" data-app="code-rain">
+                        <i class="fas fa-download"></i> 立即下载
+                    </button>
+                    <div class="app-details">
+                        <span>v2.1.0</span>
+                        <span>Windows</span>
+                        <span>4.8 MB</span>
+                    </div>
+                </div>
+                
+                <!-- App 2 - 数字粒子风暴 -->
+                <div class="app-card">
+                    <div class="app-icon">
+                        <i class="fas fa-wind"></i>
+                    </div>
+                    <h3 class="app-title">数字粒子风暴</h3>
+                    <p class="app-description">
+                        通过高级粒子系统打造的交互式数字风暴，用户可以通过鼠标或触摸屏控制粒子流动。具有惊艳的视觉效果和流畅的交互体验。
+                    </p>
+                    <ul class="app-features">
+                        <li class="app-feature">ai制作，请见谅！</li>
+                        <li class="app-feature">音频可视化同步</li>
+                        <li class="app-feature">12种粒子形态预设</li>
+                        <li class="app-feature">重力与物理参数设置</li>
+                        <li class="app-feature">多点触控支持</li>
+                    </ul>
+                    <button class="download-btn" data-app="particle-storm">
+                        <i class="fas fa-download"></i> 立即下载
+                    </button>
+                    <div class="app-details">
+                        <span>v1.4.2</span>
+                        <span>Windows</span>
+                        <span>6.3 MB</span>
+                    </div>
+                </div>
+                
+                <!-- App 3 - 神经节点可视化（此应用未上传，请勿下载！） -->
+                <div class="app-card">
+                    <div class="app-icon">
+                        <i class="fas fa-infinity"></i>
+                    </div>
+                    <h3 class="app-title">神经节点可视化</h3>
+                    <p class="app-description">
+                        人工智能神经网络结构的3D可视化工具，帮助理解深度学习模型的工作原理。支持主流框架模型导入和分析。
+                    </p>
+                    <ul class="app-features">
+                        <li class="app-feature">多种神经网络架构</li>
+                        <li class="app-feature">训练过程实时可视化</li>
+                        <li class="app-feature">交互式3D探索</li>
+                        <li class="app-feature">模型结构导出功能</li>
+                        <li class="app-feature">TensorFlow/PyTorch支持</li>
+                    </ul>
+                    <button class="download-btn" data-app="neural-viz">
+                        <i class="fas fa-download"></i> 等待上传
+                    </button>
+                    <div class="app-details">
+                        <span>v？.？.？</span>
+                        <span>？</span>
+                        <span>？</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>关于我们</h3>
+                    <p style="color: #bbb; line-height: 1.8;">
+                        我们是一群对技术充满热情的开发者，专注于创造独特而实用的数字体验应用。
+                        每一行代码都是我们匠心的体现，每一次更新都是我们对卓越的追求（假的）。
+                    </p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>应用软件</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> 绿色代码雨</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> 数字粒子风暴</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> 神经节点可视化</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>支持服务（假的）</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> 文档中心（假的）</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> 常见问题（假的）</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> 技术支持（假的）</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> 社区论坛（假的）</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>联系我们</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-envelope"></i> q2014rt11a@outlook </a></li>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> 中国，广东</a></li>
+                        <li><a href="#"><i class="fas fa-phone"></i> +？？？</a></li>
+                        <li><a href="#"><i class="fas fa-download"></i> 帮助中心（假的）</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025-2027 平平无奇文化 Corporation. 保留所有权利 | 依托勾石</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 预加载进度动画
+            const preloader = document.querySelector('.preloader');
+            const progressBar = document.querySelector('.progress-bar');
+            let progress = 0;
+            
+            const loadInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    clearInterval(loadInterval);
+                    progressBar.style.width = '100%';
+                    setTimeout(() => {
+                        preloader.classList.add('hide');
+                    }, 500);
+                } else {
+                    progressBar.style.width = `${progress}%`;
+                }
+            }, 200);
+            
+            // 初始化代码雨效果
+            const canvas = document.getElementById('code-rain');
+            const ctx = canvas.getContext('2d');
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            const chars = "01010101[]{}();/*-+<>?$%&@#!~^|\\`\"'_=ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const fontSize = 18;
+            const columns = canvas.width / fontSize;
+            
+            const drops = [];
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -100;
+            }
+            
+            function drawCodeRain() {
+                ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.font = `${fontSize}px monospace`;
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                    ctx.fillStyle = '#4ECCA3';
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    ctx.shadowColor = '#4ECCA3';
+                    ctx.shadowBlur = 8;
+                    
+                    if (Math.random() > 0.97) {
+                        ctx.fillStyle = '#00FF9D';
+                        ctx.fillText(text, i * fontSize, (drops[i] - 1) * fontSize);
+                    }
+                    
+                    ctx.shadowBlur = 0;
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    
+                    drops[i] += Math.random() * 0.4 + 0.6;
+                }
+            }
+            
+            function animate() {
+                drawCodeRain();
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+            
+            // 应用卡片动画
+            const appCards = document.querySelectorAll('.app-card');
+            function checkCards() {
+                appCards.forEach(card => {
+                    const cardTop = card.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (cardTop < windowHeight * 0.85) {
+                        card.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('DOMContentLoaded', checkCards);
+            window.addEventListener('scroll', checkCards);
+            
+            // 导航栏效果
+            const header = document.querySelector('header');
+            let lastScrollTop = 0;
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > 100) {
+                    header.classList.add('scrolled');
+                    if (scrollTop > lastScrollTop && scrollTop > 200) {
+                        header.style.transform = 'translateY(-100%)';
+                    } else {
+                        header.style.transform = 'translateY(0)';
+                    }
+                } else {
+                    header.classList.remove('scrolled');
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+            
+            // 应用下载功能
+            const downloadButtons = document.querySelectorAll('.download-btn');
+            const downloadDialog = document.getElementById('download-dialog');
+            const closeDialog = document.getElementById('close-dialog');
+            const cancelDownload = document.getElementById('cancel-download');
+            const startDownload = document.getElementById('start-download');
+            
+            // 应用信息
+            const appInfo = {
+                'code-rain': {
+                    name: '绿色炫酷代码雨（访问码：ajcr）',
+                    version: 'v2.1.0',
+                    size: '40.....MB',
+                    type: '安装程序',
+                    os: 'Windows 10/11',
+                    icon: 'fas fa-code',
+                    file: 'https://wwkt.lanzoul.com/idr0P2ytxkcb'
+                },
+                'particle-storm': {
+                    name: '数字粒子风暴 访问码 fe6u',
+                    version: 'v1.4.2',
+                    size: '40.....MB',
+                    type: '安装程序',
+                    os: 'Windows',
+                    icon: 'fas fa-wind',
+                    file: 'https://wwkt.lanzoul.com/iVOqa2ytyi4h'
+                },
+                'neural-viz': {
+                    name: '神经节点可视化（此应用未完善完全，请勿下载！）',
+                    version: '？',
+                    size: '？',
+                    type: '？',
+                    os: '？',
+                    icon: 'fas fa-infinity',
+                    file: 'https://example.com/downloads/neural_visualizer_v3.0.exe'
+                }
+            };
+            
+            let currentApp = null;
+            
+            // 添加点击事件到下载按钮
+            downloadButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const appId = this.dataset.app;
+                    currentApp = appId;
+                    
+                    // 更新对话框内容
+                    document.getElementById('app-name').textContent = appInfo[appId].name;
+                    document.getElementById('app-version').textContent = appInfo[appId].version;
+                    document.getElementById('app-size').textContent = appInfo[appId].size;
+                    document.getElementById('app-type').textContent = appInfo[appId].type;
+                    document.getElementById('app-os').textContent = appInfo[appId].os;
+                    document.getElementById('confirm-icon').className = appInfo[appId].icon + ' app-confirm-icon';
+                    document.getElementById('confirm-title').textContent = appInfo[appId].name;
+                    
+                    // 显示对话框
+                    downloadDialog.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            
+            // 关闭对话框事件
+            const closeDialogFunc = function() {
+                downloadDialog.classList.remove('active');
+                document.body.style.overflow = 'auto';
+                currentApp = null;
+            };
+            
+            closeDialog.addEventListener('click', closeDialogFunc);
+            cancelDownload.addEventListener('click', closeDialogFunc);
+            
+            // 开始下载
+            startDownload.addEventListener('click', function() {
+                if (currentApp) {
+                    // 创建虚拟下载链接
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = appInfo[currentApp].file;
+                    downloadLink.download = `${appInfo[currentApp].name.replace(/\s+/g, '_')}_${appInfo[currentApp].version}.exe`;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                    
+                    // 关闭对话框
+                    closeDialogFunc();
+                    
+                    // 显示下载成功信息
+                    setTimeout(() => {
+                        alert(`🎉 ${appInfo[currentApp].name} 下载成功！请检查您的下载文件夹。`);
+                    }, 1000);
+                }
+            });
+            
+            // 添加粒子背景效果
+            function createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                const particleCount = 80;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.cssText = `
+                        position: absolute;
+                        background: rgba(78, 204, 163, ${0.15 + Math.random() * 0.25});
+                        border-radius: 50%;
+                        width: ${Math.random() * 6 + 1}px;
+                        height: ${Math.random() * 6 + 1}px;
+                        top: ${Math.random() * 100}%;
+                        left: ${Math.random() * 100}%;
+                        animation: float ${15 + Math.random() * 25}s infinite ease-in-out;
+                        animation-delay: ${Math.random() * 5}s;
+                        opacity: ${0.1 + Math.random() * 0.3};
+                        z-index: 0;
+                        pointer-events: none;
+                        filter: blur(${Math.random() > 0.7 ? '1.5px' : '0.8px'});
+                    `;
+                    particlesContainer.appendChild(particle);
+                    
+                    // 添加漂浮动画
+                    document.styleSheets[0].insertRule(`
+                        @keyframes float-particle-${i} {
+                            0% {
+                                transform: translate(0, 0);
+                            }
+                            25% {
+                                transform: translate(${Math.random() * 60 - 30}px, ${Math.random() * 40 - 20}px);
+                            }
+                            50% {
+                                transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 80 - 40}px);
+                            }
+                            75% {
+                                transform: translate(${Math.random() * 40 - 20}px, ${Math.random() * 60 - 30}px);
+                            }
+                            100% {
+                                transform: translate(0, 0);
+                            }
+                        }
+                    `, document.styleSheets[0].cssRules.length);
+                    
+                    particle.style.animation = `float-particle-${i} ${25 + Math.random() * 35}s infinite linear`;
+                }
+            }
+            
+            createParticles();
+        });
+    </script>
+</body>
+</html>
